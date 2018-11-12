@@ -1,0 +1,12 @@
+﻿create temporary table tmp (rnk numeric, sigla text, team text, points numeric(17,0)) on commit drop;
+
+copy tmp from '/home/orlando/Documentos/DesafioCopadoMundo/Datasets/ranking_fifa.csv' with csv header delimiter ',';
+
+update times
+set rnk=b.rnk,
+sigla=b.sigla,
+points=b.points
+from (select * from tmp) b
+where trim(nome)=trim(b.team);
+
+

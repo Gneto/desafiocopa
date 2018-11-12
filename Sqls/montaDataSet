@@ -1,0 +1,326 @@
+﻿with cartoes as (
+	select b.ano, a.time, 
+	case when a.eventos ilike '%RSY%' then 'segundo-amarelo'
+	when a.eventos ilike 'Y%' then 'amarelo'
+	when a.eventos ilike 'R%' then 'vermelho'
+	end as cartoes, count(*) qtde
+	from jogadores a
+	inner join partidas b on 
+	 a.partida_id = b.partida_id
+	and a.rodada_id = b.rodada_id
+	where (eventos ilike '%RSY%'
+	or eventos ilike 'Y%'
+	or eventos ilike 'R%') and b.fase ilike 'Group%'
+	group by b.ano, time, case when a.eventos ilike '%RSY%' then 'segundo-amarelo'
+	when a.eventos ilike 'Y%' then 'amarelo'
+	when a.eventos ilike 'R%' then 'vermelho'
+	end
+)
+
+
+select partida_id, a.ano, 
+case 
+	when fase = 'Group 1' then 'Group A'
+	when fase = 'Group 2' then 'Group B'
+	when fase = 'Group 3' then 'Group C'
+	when fase = 'Group 4' then 'Group D'
+	when fase = 'Group 5' then 'Group E'
+	when fase = 'Group 6' then 'Group F'
+	when fase = 'Group 7' then 'Group G'
+	else fase
+end fase, 
+--casa, 
+coalesce(russia2018_casa.id, 0) as id_casa,
+/*case 
+	when gols_casa > gols_fora then 3
+	when gols_casa < gols_fora then 0 
+	else 1 
+end as pontos_casa, */
+gols_casa, gols_fora, 
+--fora, 
+coalesce(russia2018_fora.id, 0) as id_fora/*,
+case 
+	when gols_fora > gols_casa then 3
+	when gols_fora < gols_casa then 0
+	else 1 
+end as pontos_fora,*/
+/*case 
+	when gols_fora > gols_casa then fora
+	when gols_fora < gols_casa then casa
+	else 'empate'
+end as vencedor, 
+case 
+	when gols_fora > gols_casa then sigla_time_fora
+	when gols_fora < gols_casa then sigla_time_casa
+	else 'empate'
+end as sigla_time_vencedor, 
+sigla_time_casa, 
+sigla_time_fora,
+coalesce(amarelo_casa.qtde, 0)as amarelo_casa,
+coalesce(amarelo_fora.qtde, 0) as amarelo_fora,
+coalesce(vermelho_casa.qtde, 0) as vermelho_casa,
+coalesce(vermelho_fora.qtde, 0) as vermelho_fora,
+coalesce(segundo_amarelo_fora.qtde, 0) as segundo_amarelo_fora,
+coalesce(segundo_amarelo_casa.qtde, 0) as segundo_amarelo_casa */
+from partidas a
+left join cartoes amarelo_casa on 
+	a.sigla_time_casa = amarelo_casa.time
+	and a.ano = amarelo_casa.ano
+	and amarelo_casa.cartoes='amarelo'
+left join cartoes amarelo_fora on 
+	a.sigla_time_fora = amarelo_fora.time
+	and a.ano = amarelo_fora.ano
+	and amarelo_fora.cartoes='amarelo'
+left join cartoes vermelho_casa on 
+	a.sigla_time_casa = vermelho_casa.time
+	and a.ano = vermelho_casa.ano
+	and vermelho_casa.cartoes='vermelho'
+left join cartoes vermelho_fora on 
+	a.sigla_time_fora = vermelho_fora.time
+	and a.ano = vermelho_fora.ano
+	and vermelho_fora.cartoes='vermelho'
+left join cartoes segundo_amarelo_casa on 
+	a.sigla_time_casa = segundo_amarelo_casa.time
+	and a.ano = segundo_amarelo_casa.ano
+	and segundo_amarelo_casa.cartoes='segundo-amarelo'
+left join cartoes segundo_amarelo_fora on 
+	a.sigla_time_fora = segundo_amarelo_fora.time
+	and a.ano = segundo_amarelo_fora.ano
+	and segundo_amarelo_fora.cartoes='segundo-amarelo'
+left join times russia2018_casa on 
+	a.casa = russia2018_casa.nome
+left join times russia2018_fora on 
+	a.fora = russia2018_fora.nome
+--where a.fase ilike 'Group%' -- comentado para levar todos os jogos para o conjunto de treino em 26/06/2018
+;
+
+
+-- dataset Train
+select distinct a.id as partida_id, to_char(data, 'yyyy') as ano, case 
+	when fase = 'grupo 1' then 'Group A'
+	when fase = 'grupo 2' then 'Group B'
+	when fase = 'grupo 3' then 'Group C'
+	when fase = 'grupo 4' then 'Group D'
+	when fase = 'grupo 5' then 'Group E'
+	when fase = 'grupo 6' then 'Group F'
+	when fase = 'grupo 7' then 'Group G'
+	when fase = 'grupo 8' then 'Group H'
+	else fase
+end fase, --b.nome_geral as casa, 
+russia2018_casa.id as id_casa, --c.nome_geral as fora, 
+russia2018_fora.id as id_fora
+from tabela2018 a
+left join pais_nacionalidade b on a.casa = b.nome_portugues
+left join pais_nacionalidade c on a.fora = c.nome_portugues
+left join times russia2018_casa on trim(b.nome_geral) = trim(russia2018_casa.nome)
+left join times russia2018_fora on trim(c.nome_geral) = trim(russia2018_fora.nome)
+--where fase like 'grupo%'
+order by a.id;
+
+-- dataset Teams
+select * from times;
+
+
+-- monta os grupos em cada time esteve
+SELECT DISTINCT ano, fase as grupo, id, TRIM(team) team
+FROM (
+	/*SELECT ano, fase, casa as team
+	FROM partidas
+	WHERE fase ilike 'Group%'
+
+	UNION 
+	SELECT ano, fase, fora as team
+	FROM partidas
+	WHERE fase ilike 'Group%'
+
+	UNION*/
+	SELECT DISTINCT 2018 AS ano, case 
+	when fase = 'grupo 1' then 'Group A'
+	when fase = 'grupo 2' then 'Group B'
+	when fase = 'grupo 3' then 'Group C'
+	when fase = 'grupo 4' then 'Group D'
+	when fase = 'grupo 5' then 'Group E'
+	when fase = 'grupo 6' then 'Group F'
+	when fase = 'grupo 7' then 'Group G'
+	when fase = 'grupo 8' then 'Group H'
+	else fase
+	end fase, b.nome_geral as team
+	FROM tabela2018 a
+	LEFT JOIN pais_nacionalidade b on a.casa = b.nome_portugues
+	WHERE fase ilike 'Grupo%'
+) a
+LEFT JOIN times B ON TRIM(a.team) = TRIM(b.nome)
+ORDER BY TRIM(team)
+;
+
+-- BASE DE TRAINAMENTO PARA OITAVAS
+SELECT ANO, coalesce(russia2018_casa.id, 0) as id_casa, 
+coalesce(case when gols_casa = gols_fora then
+	case 
+		when OBSERVACAO like '%' ||casa || '%' then coalesce(russia2018_casa.id, 0)
+		when OBSERVACAO like '%' || fora || '%' then coalesce(russia2018_fora.id, 0) 
+	end 
+end, 0) as ganhador_penals, casa, fora, GOLS_CASA, GOLS_FORA, coalesce(russia2018_fora.id, 0) as id_fora, OBSERVACAO 
+FROM PARTIDAS a
+left join times russia2018_casa on 
+	a.casa = russia2018_casa.nome
+left join times russia2018_fora on 
+	a.fora = russia2018_fora.nome
+WHERE FASE ILIKE 'Round of 16';
+
+--GERA BASE DE CARTOES AMARELOS E VERMELHOS
+WITH cartoes_partidas AS (
+	SELECT DISTINCT a.partida_id, b.ano, a.time, count(*) as Qtde
+	FROM jogadores a
+	INNER JOIN partidas b ON
+	a.partida_id = b.partida_id
+	and a.rodada_id = b.rodada_id
+	WHERE (eventos ilike '%RSY%'
+	or eventos ilike 'Y%'
+	or eventos ilike 'R%') 
+	GROUP BY a.partida_id, b.ano, a.time
+), partidas_semcartoes AS (  
+	SELECT b.partida_id, c.ano, b.time, 0 as Qtde 
+	FROM cartoes_partidas a
+	RIGHT JOIN (SELECT DISTINCT rodada_id, partida_id, time FROM jogadores ) b ON 
+	a.partida_id = b.partida_id
+	AND a.time = b.time
+	INNER JOIN partidas c ON
+	b.partida_id = c.partida_id
+	and b.rodada_id = c.rodada_id
+	WHERE a.partida_id IS NULL
+), juncaoBase AS (
+	SELECT * FROM cartoes_partidas
+	UNION 
+	SELECT * FROM partidas_semcartoes
+)
+
+SELECT b.id, b.nome, a.partida_id, a.ano, b.classificado_russia, Qtde 
+FROM juncaoBase a
+INNER JOIN times b ON
+a.time = b.sigla;
+
+
+
+
+/*
+
+with cartoes as (
+	select b.ano, a.time, 
+	case when a.eventos ilike '%RSY%' then 'segundo-amarelo'
+	when a.eventos ilike 'Y%' then 'amarelo'
+	when a.eventos ilike 'R%' then 'vermelho'
+	end as cartoes, count(*) qtde
+	from jogadores a
+	inner join partidas b on 
+	 a.partida_id = b.partida_id
+	and a.rodada_id = b.rodada_id
+	where (eventos ilike '%RSY%'
+	or eventos ilike 'Y%'
+	or eventos ilike 'R%') and b.fase ilike 'Group%'
+	group by b.ano, time, case when a.eventos ilike '%RSY%' then 'segundo-amarelo'
+	when a.eventos ilike 'Y%' then 'amarelo'
+	when a.eventos ilike 'R%' then 'vermelho'
+	end
+), partidas AS (
+
+select partida_id, a.ano, 
+coalesce(russia2018_casa.id, 0) as team,
+coalesce(amarelo_casa.qtde, 0) as amarelo,
+coalesce(vermelho_casa.qtde, 0) as vermelho,
+coalesce(segundo_amarelo_casa.qtde, 0) as segundo_amarelo,
+coalesce(amarelo_casa.qtde, 0) + coalesce(vermelho_casa.qtde, 0) + coalesce(segundo_amarelo_casa.qtde, 0) as total
+from partidas a
+left join cartoes amarelo_casa on 
+	a.sigla_time_casa = amarelo_casa.time
+	and a.ano = amarelo_casa.ano
+	and amarelo_casa.cartoes='amarelo'
+left join cartoes vermelho_casa on 
+	a.sigla_time_casa = vermelho_casa.time
+	and a.ano = vermelho_casa.ano
+	and vermelho_casa.cartoes='vermelho'
+left join cartoes segundo_amarelo_casa on 
+	a.sigla_time_casa = segundo_amarelo_casa.time
+	and a.ano = segundo_amarelo_casa.ano
+	and segundo_amarelo_casa.cartoes='segundo-amarelo'
+left join times russia2018_casa on 
+	a.casa = russia2018_casa.nome
+left join times russia2018_fora on 
+	a.fora = russia2018_fora.nome
+
+UNION 
+
+select partida_id, a.ano, 
+coalesce(russia2018_fora.id, 0) as team,
+coalesce(amarelo_fora.qtde, 0) as amarelo,
+coalesce(vermelho_fora.qtde, 0) as vermelho,
+coalesce(segundo_amarelo_fora.qtde, 0) as segundo_amarelo,
+coalesce(amarelo_fora.qtde, 0)  + coalesce(vermelho_fora.qtde, 0) + coalesce(segundo_amarelo_fora.qtde, 0) as total
+from partidas a
+left join cartoes amarelo_fora on 
+	a.sigla_time_fora = amarelo_fora.time
+	and a.ano = amarelo_fora.ano
+	and amarelo_fora.cartoes='amarelo'
+left join cartoes vermelho_fora on 
+	a.sigla_time_fora = vermelho_fora.time
+	and a.ano = vermelho_fora.ano
+	and vermelho_fora.cartoes='vermelho'
+left join cartoes segundo_amarelo_fora on 
+	a.sigla_time_fora = segundo_amarelo_fora.time
+	and a.ano = segundo_amarelo_fora.ano
+	and segundo_amarelo_fora.cartoes='segundo-amarelo'
+left join times russia2018_casa on 
+	a.casa = russia2018_casa.nome
+left join times russia2018_fora on 
+	a.fora = russia2018_fora.nome
+) 
+SELECT DISTINCT * FROM PARTIDAS A
+INNER JOIN TIMES B ON 
+A.TEAM = B.ID
+WHERE B.CLASSIFICADO_RUSSIA=1;
+*/
+
+-- CRIA BASE DE JOGADORES
+update convocados a
+set id_desempenho = b.id
+from (
+select b.id, a.team, a.posicao, a.popular_name --, b.acceleration, b.aggression, b.agility, b.balance, b.ball_control, b.composure, b.crossing, b.dribbling, b.finishing,
+--b.gk_diving, b.gk_handling, b.gk_kicking, b.gk_positioning, b.jumping, b.penalties
+from convocados a
+left join desempenho b on
+a.team = b.pais
+and TRIM(a.sort_name) ilike '%' || upper(trim(regexp_replace(nome_jogador, '[A-Z].', ''))) || '%' 
+and a.club like '%' || b.clube || '%'
+left join times c on
+trim(c.nome) = a.team
+WHERE upper(trim(regexp_replace(nome_jogador, '[A-Z].', ''))) IS NOT NULL and 
+classificado_russia=1
+and a.id_desempenho is null
+) b
+where a.team = b.team
+and a.posicao = b.posicao
+and a.popular_name = b.popular_name;
+
+
+
+-- MONTA A BASE DE CONVOCADOS SELECOES DESEMPENHO
+SELECT a.id as id_convocado, team, posicao, altura, peso, a.popular_name, 
+COALESCE(b.acceleration, 0) AS acceleration, COALESCE(b.aggression, 0) AS aggression, COALESCE(b.agility, 0) AS agility, COALESCE(b.balance,0) AS balance, 
+COALESCE(b.ball_control,0) AS ball_control, COALESCE(b.composure, 0) AS composure, COALESCE(b.crossing, 0) AS crossing, COALESCE(b.curve, 0) AS curve,
+COALESCE(b.dribbling, 0) AS dribbling, COALESCE(b.finishing, 0) AS finishing, COALESCE(b.gk_diving, 0) AS gk_diving, COALESCE(b.gk_handling, 0) AS gk_handling,
+COALESCE(b.gk_kicking, 0) AS gk_kicking, COALESCE(b.gk_positioning, 0) AS gk_positioning, COALESCE(b.gk_reflexes, 0) AS gk_reflexes,
+COALESCE(b.heading_accuracy, 0) AS heading_accuracy, COALESCE(b.interceptions, 0) AS interceptions, COALESCE(b.jumping, 0) AS jumping, 
+COALESCE(b.long_passing, 0) AS long_passing, COALESCE(b.penalties, 0) AS penalties, COALESCE(b.positioning, 0) AS positioning
+FROM convocados a
+LEFT JOIN desempenho b ON
+a.id_desempenho = b.id;
+
+-- BASE DE TESTE PARA CARTOES
+SELECT c.id as team, c.nome, a.partida_id, 2018 as ano, 1 as classificado_russia 
+FROM (
+	SELECT DISTINCT id as partida_id,  casa as team FROM tabela2018 WHERE fase ilike 'Grupo%'
+	UNION 
+	SELECT DISTINCT id as partida_id, fora as team FROM tabela2018 WHERE fase ilike 'Grupo%'
+) A
+INNER JOIN pais_nacionalidade b on a.team = b.nome_portugues
+INNER JOIN times c on TRIM(b.nome_geral) = TRIM(c.nome);

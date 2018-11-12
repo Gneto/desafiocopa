@@ -1,0 +1,65 @@
+PartidaID;Data;Hora;Casa;Fora;Estadio;Vencedor;Grupo
+1;14/06/2018;12:00;Rússia;Arábia Saudita;Moscou – L;0;grupo 1
+2;15/06/2018;09:00;Egito;Uruguai;Ecaterimburgo;0;grupo 1
+3;19/06/2018;19:00;Rússia;Egito;São Petersburgo;0;grupo 1
+4;20/06/2018;12:00;Uruguai;Arábia Saudita;Rostov-On-Don;0;grupo 1
+5;25/06/2018;11:00;Uruguai;Rússia;Samara;0;grupo 1
+6;25/06/2018;11:00;Arábia Saudita;Egito;Volgogrado;0;grupo 1
+7;15/06/2018;12:00;Marrocos;Iran;São Petersburgo;0;grupo 2
+8;15/06/2018;15:00;Portugal;Espanha;Sochi;0;grupo 2
+9;20/06/2018;09:00;Portugal;Marrocos;Moscou – L;0;grupo 2
+10;20/06/2018;15:00;Iran;Espanha;Kazan;0;grupo 2
+11;25/06/2018;15:00;Espanha;Marrocos;Kaliningrado;0;grupo 2
+12;25/06/2018;15:00;Iran;Portugal;Saransk;0;grupo 2
+13;16/06/2018;07:00;França;Austrália;Kazan;0;grupo 3
+14;16/06/2018;13:00;Peru;Dinamarca;Saransk;0;grupo 3
+15;21/06/2018;09:00;Dinamarca;Austrália;Samara;0;grupo 3
+16;21/06/2018;12:00;França;Peru;Yekaterinburg;0;grupo 3
+17;26/06/2018;11:00;Dinamarca;França;Moscou – L;0;grupo 3
+18;26/06/2018;11:00;Austrália;Peru;Sochi;0;grupo 3
+19;16/06/2018;10:00;Argentina;Islândia;Moscou – S;0;grupo 4
+20;16/06/2018;16:00;Croácia;Nigéria;Kaliningrado;0;grupo 4
+21;21/06/2018;15:00;Argentina;Croácia;Nijni Novgorod;0;grupo 4
+22;22/06/2018;12:00;Nigéria;Islândia;Volgogrado;0;grupo 4
+23;26/06/2018;15:00;Islândia;Croácia;Rostov-do-Don;0;grupo 4
+24;26/06/2018;15:00;Nigéria;Argentina;São Petersburgo;0;grupo 4
+25;17/06/2018;09:00;Costa Rica;Sérvia;Rostov-do-Don;0;grupo 5
+26;17/06/2018;15:00;Brasil;Suiça;Samara;0;grupo 5
+27;22/06/2018;09:00;Brasil;Costa Rica;São Petersburgo;0;grupo 5
+28;22/06/2018;15:00;Sérvia;Suiça;Kaliningrado;0;grupo 5
+29;27/06/2018;15:00;Sérvia;Brasil;Morcou – S;0;grupo 5
+30;27/06/2018;15:00;Suiça;Costa Rica;Nijni Novgorod;0;grupo 5
+31;17/06/2018;12:00;Alemanha;México;Moscou – L;0;grupo 6
+32;18/06/2018;09:00;Suécia;Coréia do Sul;Nijni Novgorod;0;grupo 6
+33;23/06/2018;12:00;Coréia do Sul;México;Rostov-do-Don;0;grupo 6
+34;23/06/2018;15:00;Alemanha;Suécia;Sochi;0;grupo 6
+35;27/06/2018;11:00;Coréia do Sul;Alemanha;Kazan;0;grupo 6
+36;27/06/2018;11:00;México;Suécia;Iekaterinburgo;0;grupo 6
+37;18/06/2018;12:00;Bélgica;Panamá;Sochi;0;grupo 7
+38;18/06/2018;15:00;Tunísia;Inglaterra;Volgogrado;0;grupo 7
+39;23/06/2018;09:00;Bélgica;Tunísia;Moscou – S;0;grupo 7
+40;24/06/2018;09:00;Inglaterra;Panamá;Nijni Novgorod;0;grupo 7
+41;28/06/2018;15:00;Inglaterra;Bélgica;Kaliningrado;0;grupo 7
+42;28/06/2018;15:00;Panamá;Tunísia;Saransk;0;grupo 7
+43;19/06/2018;09:00;Colômbia;Japão;Saransk;0;grupo 8
+44;19/06/2018;12:00;Polônia;Senegal;Moscou – S;0;grupo 8
+45;24/06/2018;12:00;Japão;Senegal;Iekaterinburgo;0;grupo 8
+46;24/06/2018;15:00;Polônia;Colômbia;Kazan;0;grupo 8
+47;28/06/2018;11:00;Japão;Polônia;Volgogrado;0;grupo 8
+48;28/06/2018;11:00;Senegal;Colômbia;Samara;0;grupo 8
+49;30/06/2018;15:00;1º do grupo A;2º do grupo B;Sochi;49;oitavas
+50;30/06/2018;11:00;1º do grupo C;2º do grupo D;Kazan;50;oitavas
+51;01/07/2018;11:00;1º do grupo B;2º do grupo A;Moscou – L;51;oitavas
+52;01/07/2018;15:00;1º do grupo D;2º do grupo C;Nijni Novgorod;52;oitavas
+53;02/07/2018;11:00;1º do grupo E;2º do grupo F;Samara;53;oitavas
+54;02/07/2018;15:00;1º do grupo G;2º do grupo H;Rostov-do-Don;54;oitavas
+55;03/07/2018;11:00;1º do grupo F;2º do grupo E;São Petersburgo;55;oitavas
+56;03/07/2018;15:00;1º do grupo H;2º do grupo G;Moscou – S;56;oitavas
+57;06/07/2018;11:00;Vencedor do 49;Vencedor do 50;Nijni Novgorod;57;quartas
+58;06/07/2018;15:00;Vencedor do 53;Vencedor do 54;Kazan;58;quartas
+59;07/07/2018;15:00;Vencedor do 51;Vencedor do 52;Sochi;60;quartas
+60;07/07/2018;11:00;Vencedor do 55;Vencedor do 56;Samara;59;quartas
+61;10/07/2011;15:00;Vencedor do 57;Vencedor do 58;São Petersburgo;61;semi
+62;11/07/2018;15:00;Vencedor do 59;Vencedor do 60;Moscou – L;62;semi
+63;14/07/2018;11:00;;;São Petersburgo;63;terceiro
+64;15/07/2018;12:00;;;Moscou – L;64;final

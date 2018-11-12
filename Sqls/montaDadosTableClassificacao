@@ -1,0 +1,115 @@
+﻿
+
+select a.ano, a.fase, 
+case when gols_casa > gols_fora then casa
+when gols_casa < gols_fora then fora
+else 'empate' end  
+from partidas a
+inner join jogadores b on 
+a.partida_id = b.partida_id
+and a.rodada_id = b.rodada_id
+where a.fase ilike 'Group%';
+
+-- cartoes
+select b.ano, a.time, 
+case when a.eventos ilike '%RSY%' then 'segundo-amarelo'
+when a.eventos ilike 'Y%' then 'amarelo'
+when a.eventos ilike 'R%' then 'vermelho'
+end as cartoes, count(*) 
+from jogadores a
+inner join partidas b on 
+ a.partida_id = b.partida_id
+and a.rodada_id = b.rodada_id
+where (eventos ilike '%RSY%'
+or eventos ilike 'Y%'
+or eventos ilike 'R%') and b.fase ilike 'Group%'
+group by b.ano, time, case when a.eventos ilike '%RSY%' then 'segundo-amarelo'
+when a.eventos ilike 'Y%' then 'amarelo'
+when a.eventos ilike 'R%' then 'vermelho'
+end;
+
+
+
+
+select ano, fase, time, sigla_time, sum(pontos) as pontos, sum(gols_marcados) as gols_marcados, sum(gols_sofridos) as gols_sofridos
+from (
+	-- apura os pontos, gols marcados e gols_sofridos dos jogos em casa
+	select ano, fase, casa as time, sigla_time_casa as sigla_time, pontos_casa as pontos, gols_casa as gols_marcados, gols_fora as gols_sofridos 
+	from (
+		select ano, 
+		case 
+			when fase = 'Group 1' then 'Group A'
+			when fase = 'Group 2' then 'Group B'
+			when fase = 'Group 3' then 'Group C'
+			when fase = 'Group 4' then 'Group D'
+			when fase = 'Group 5' then 'Group E'
+			when fase = 'Group 6' then 'Group F'
+			when fase = 'Group 7' then 'Group G'
+			else fase
+		end fase, 
+		casa, 
+		case 
+			when gols_casa > gols_fora then 3
+			when gols_casa < gols_fora then 0 
+			else 1 
+		end as pontos_casa, 
+		gols_casa, gols_fora, 
+		fora, 
+		case 
+			when gols_fora > gols_casa then 3
+			when gols_fora < gols_casa then 0
+			else 1 
+		end as pontos_fora,
+		case 
+			when gols_fora > gols_casa then fora
+			when gols_fora < gols_casa then casa
+			else 'empate'
+		end as vencedor, 
+		case 
+			when gols_fora > gols_casa then sigla_time_fora
+			when gols_fora < gols_casa then sigla_time_casa
+			else 'empate'
+		end as sigla_time_vencedor, 
+		sigla_time_casa, 
+		sigla_time_fora
+		from partidas
+		where fase ilike 'Group%'
+	) a
+
+
+	union 
+	-- apura os pontos, gols marcados e gols_sofridos dos jogos fora
+	select * 
+	from (
+		select ano, 
+		case 
+			when fase = 'Group 1' then 'Group A'
+			when fase = 'Group 2' then 'Group B'
+			when fase = 'Group 3' then 'Group C'
+			when fase = 'Group 4' then 'Group D'
+			when fase = 'Group 5' then 'Group E'
+			when fase = 'Group 6' then 'Group F'
+			when fase = 'Group 7' then 'Group G'
+			else fase
+		end fase, 
+		casa, 
+		case 
+			when gols_casa > gols_fora then 3
+			when gols_casa < gols_fora then 0 
+			else 1 
+		end as pontos_casa, 
+		gols_casa, gols_fora, 
+		fora, 
+		case 
+			when gols_fora > gols_casa then 3
+			when gols_fora < gols_casa then 0
+			else 1 
+		end as pontos_fora, 
+		sigla_time_casa, 
+		sigla_time_fora
+		from partidas
+		where fase ilike 'Group%'
+	) a
+) consolidacao
+group by ano, fase, time, sigla_time
+order by ano, fase, pontos desc, gols_marcados;

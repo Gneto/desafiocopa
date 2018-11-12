@@ -1,0 +1,74 @@
+﻿CREATE TABLE convocados
+(
+  id serial not null,
+  team text,
+  camisa numeric,
+  posicao char(2),
+  popular_name text,
+  aniversario date,
+  sort_name text, 
+  club text,
+  altura numeric,
+  peso numeric,
+  CONSTRAINT pk_convocados PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE convocados
+  OWNER TO postgres;
+
+copy convocados (team, camisa, posicao, popular_name, aniversario, sort_name, club, altura, peso) from '/home/orlando/Documentos/DesafioCopadoMundo/Datasets/atletasConvocadosRussia2018.csv' with csv header delimiter ';';
+
+select * from convocados;
+
+
+
+
+
+CREATE TABLE desempenho
+(
+  id numeric not null,
+  nome_jogador text,
+  pais text,
+  acceleration numeric,
+  aggression numeric,
+  agility numeric,
+  balance numeric,
+  ball_control numeric,
+  composure numeric,
+  crossing numeric,
+  curve numeric,
+  dribbling numeric,
+  finishing numeric,
+  gk_diving numeric,
+  gk_handling numeric,
+  gk_kicking numeric,
+  gk_positioning numeric,
+  gk_reflexes numeric,
+  heading_accuracy numeric,
+  interceptions numeric,
+  jumping numeric,
+  long_passing numeric,
+  penalties numeric,
+  positioning numeric,
+  CONSTRAINT pk_desempenho PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE desempenho
+  OWNER TO postgres;
+
+copy desempenho from '/home/orlando/Documentos/DesafioCopadoMundo/Datasets/EA-Fifa-18-CompleteDataset.csv' with csv header delimiter ',';
+
+
+create temporary table tmp(id numeric, clube text) on commit drop;
+
+copy tmp from '/home/orlando/Documentos/DesafioCopadoMundo/Datasets/ClubeJogador.csv' with csv header delimiter ',';
+
+update desempenho a
+set clube = b.clube
+from (select * from tmp) as b
+where a.id = b.id;
+

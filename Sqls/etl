@@ -1,0 +1,54 @@
+﻿select a.ano, 
+coalesce(case 
+	when win = casa then id_casa.id
+	when win = fora then id_fora.id 
+end, 0) as win, id_casa.id as casa, id_fora.id as fora,
+case 
+	when b.team = a.win then 1 else 0 
+end as classificado
+from (
+	select distinct partidas.ano, partidas.casa, partidas.fora, gols_casa, gols_fora,
+	case 
+	when gols_casa > gols_fora then casa  
+	when gols_casa < gols_fora then fora
+	else 'none'
+	end as win
+	from partidas
+	where fase ilike 'Group%'
+) as a
+left join (
+	select ano, casa as team
+	from partidas
+	where fase = 'Round of 16'
+
+	union 
+	select ano, fora as team
+	from partidas
+	where fase = 'Round of 16'
+) as b on
+a.ano = b.ano
+and a.win = b.team
+inner join times id_casa on a.casa = id_casa.nome
+inner join times id_fora on a.fora = id_fora.nome
+;
+
+
+-- ATUALIZA COLUNA DE PARTICIPACAO TABELA TIME
+
+UPDATE TIMES 
+SET PARTICIPACOES_COPA = QTDE
+FROM (
+	SELECT team, count(*) QTDE
+	FROM (
+	SELECT DISTINCT ano, casa as team FROM PARTIDAS
+
+	UNION 
+	SELECT DISTINCT ano, fora as team FROM PARTIDAS
+	) A
+	GROUP BY team
+) B
+WHERE TRIM(NOME) = TRIM(B.TEAM);
+
+
+
+
